@@ -1,0 +1,89 @@
+---
+- hosts: dev-servers
+  become: yes
+  tasks:
+    - name: update apt package index
+      ansible.builtin.apt:
+        update_cache: yes
+
+    - name: install git
+      ansible.builtin.apt:
+        name: git
+        state: present
+        update_cache: yes
+
+    - name: install java (openjdk-11-jdk for testing)
+      ansible.builtin.apt:
+        name: openjdk-11-jdk
+        state: present
+        update_cache: yes
+
+    - name: Download Apache Maven 3.9.9 binary
+      ansible.builtin.get_url:
+        url: https://archive.apache.org/dist/maven/maven-3/3.9.9/binaries/apache-maven-3.9.9-bin.tar.gz
+        dest: /opt/apache-maven-3.9.9-bin.tar.gz
+        mode: '0644'
+
+    - name: Extract Apache Maven binary
+      ansible.builtin.unarchive:
+        src: /opt/apache-maven-3.9.9-bin.tar.gz
+        dest: /opt/
+        remote_src: yes
+    - name: install dependencies for docker
+      ansible.builtin.apt:
+        name:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - software-properties-common
+        state: present
+        update_cache: yes
+
+    - name: add docker GPG key
+      ansible.builtin.apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+    - name: add docker APT repository
+      ansible.builtin.apt_repository:
+        repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release | lower }} stable"
+        state: present
+
+    - name: update apt package index again
+      ansible.builtin.apt:
+        update_cache: yes
+
+    - name: install docker CE
+      ansible.builtin.apt:
+        name: docker-ce
+        state: present
+    - name: start docker service
+      ansible.builtin.systemd:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: Ensure keyring directory exists
+      ansible.builtin.file:
+        path: /usr/share/keyrings
+        state: directory
+        mode: '0755'
+
+    - name: download jenkins GPG key
+      ansible.builtin.get_url:
+        url: https://pkg.jenkins.io/debian-stable/jenkins.io.key
+        dest: /usr/share/keyrings/jenkins.gpg
+        mode: '0644'
+
+    - name: add jenkins repository to APT sources list
+      shell:   echo "deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc]" https://pkg.jenkins.io/debian binary/ | sudo tee /etc/apt/sources.list.d/jenkins.list > /dev/null
+    - name: install jenkins
+      ansible.builtin.apt:
+        name: jenkins
+        state: present
+    - name: start jenkins service
+      shell: |
+        systemctl start jenkins
+        systemctl enable jenkins   
+
+
