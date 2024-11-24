@@ -1,0 +1,13 @@
+---
+# vars file for ec2-setup
+ec2_region: "eu-central-1"
+ec2_type: "t2.micro"
+ec2_subnet: "subnet-0aa1a0fa6fa1f275c"
+ec2_security: "launch-wizard-1"
+ec2_keypair: "ci-server-central"
+ec2_name1: "manage-node-1"
+ec2_name2: "manage-node-2"
+ec2_name3: "manage-node-3"
+ec2_ami1: "ami-0b5673b5f6e8f7fa7"
+ec2_ami2: "ami-0084a47cc718c111a"
+ec2_ami3: "ami-0084a47cc718c111a"
