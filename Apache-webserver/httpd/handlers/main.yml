@@ -1,0 +1,13 @@
+---
+# handlers file for httpd
+    - name: start apache
+      ansible.builtin.service:
+        name: apache2
+        state: present
+        enabled: yes
+
+    - name: Restart apache 
+      ansible.builtin.service:
+        name: apache2
+        state: restart 
+        

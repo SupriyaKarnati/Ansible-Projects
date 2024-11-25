@@ -25,6 +25,4 @@
       debug:
         msg: "Instance Name: {{ item.instances[0].tags.Name }} - Public IP: {{ item.instances[0].public_ip_address }}"
       loop: "{{ ec2_instances.results }}"
-      when: item.instances[0].public_ip_address is defined
-      notify: Print public IP address
-      
+      when: item.instances[0].public_ip_address is defined   
