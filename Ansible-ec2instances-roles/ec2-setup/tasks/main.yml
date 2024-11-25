@@ -20,7 +20,7 @@
        - { image: "{{ ec2_ami2 }}", name: "{{ ec2_name2 }}" }
        - { image: "{{ ec2_ami3 }}", name: "{{ ec2_name3 }}" }
       register: ec2_instances  # Register the output of ec2_instance
-
+      notify: zt
     - name: Print public IP addresses
       debug:
         msg: "Instance Name: {{ item.instances[0].tags.Name }} - Public IP: {{ item.instances[0].public_ip_address }}"
